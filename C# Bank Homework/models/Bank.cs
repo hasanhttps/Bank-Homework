@@ -9,7 +9,7 @@ namespace Bank.models {
         static public Client currentClient;
         // Private Fields
 
-        private Client[] clients = new Client[5];
+        public Client[] clients = new Client[5];
         public static int index = 0;
 
         // Constructor

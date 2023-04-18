@@ -15,7 +15,7 @@ namespace Bank {
                 while (true) {
                     Console.Clear();
                     Console.WriteLine($"{Bank.models.Bank.currentClient.Name} {Bank.models.Bank.currentClient.Surname} Xos geldiniz zehmet olmasa asagidakilardan birini secin \n\n\n");
-                    Console.Write("\t\t\t1. Balans\n\t\t\t2. Nagd Pul\n\t\t\t3. Islemler\n\nZehmet olmasa secimi daxil edin : ");
+                    Console.Write("\t\t\t1. Balans\n\t\t\t2. Nagd Pul\n\t\t\t3. Islemler\n\t\t4. Kartdan-Karta Kocurme\n\nZehmet olmasa secimi daxil edin : ");
                     int choose = Convert.ToInt32(Console.ReadLine());
                     Console.Clear();
                     if (choose == 1) {
@@ -32,8 +32,7 @@ namespace Bank {
                             int amount = Convert.ToInt32(Console.ReadLine());
                             if (Bank.models.Bank.currentClient.BankAccount.Balans - amount >= 0) {
                                 Bank.models.Bank.currentClient.BankAccount.Balans -= amount;
-                                var index = Bank.models.Bank.currentClient.BankAccount.index;
-                                Bank.models.Bank.currentClient.BankAccount.operations[index++] = $"{amount}$ had taken from this account in {DateTime.Now}.";
+                                Bank.models.Bank.currentClient.BankAccount.operations[Bank.models.Bank.currentClient.BankAccount.index++] = $"{amount}$ had taken from this account in {DateTime.Now}.";
                             }
                             else {
                                 try {
@@ -48,8 +47,7 @@ namespace Bank {
                         } else if (opt < 5 && opt > 0) {
                             if (Bank.models.Bank.currentClient.BankAccount.Balans - opt * 10 >= 0) {
                                 Bank.models.Bank.currentClient.BankAccount.Balans -= opt * 10;
-                                var index = Bank.models.Bank.currentClient.BankAccount.index;
-                                Bank.models.Bank.currentClient.BankAccount.operations[index++] = $"{opt * 10}$ had taken from this account in {DateTime.Now}.";
+                                Bank.models.Bank.currentClient.BankAccount.operations[Bank.models.Bank.currentClient.BankAccount.index++] = $"{opt * 10}$ had taken from this account in {DateTime.Now}.";
                             }
                             else {
                                 try {
@@ -75,14 +73,39 @@ namespace Bank {
 
                         Console.Write("Here your money take it . . .");
                         dynamic b = Console.ReadKey();
-                    }else if (choose == 2) {
+                    }else if (choose == 3) {
                         string[] operations = Bank.models.Bank.currentClient.BankAccount.operations;
-                        for (int i = 0; i < operations.Length; i++) {
+                        for (int i = 0; i < Bank.models.Bank.currentClient.BankAccount.index + 1; i++) {
                             Console.WriteLine(operations[i]);
                         }
-                        Console.Write("Please enter any key to continue ...");
+                        Console.Write("\n\nPlease enter any key to continue ...");
                         dynamic a = Console.ReadKey();
 
+                    }else if (choose == 4) {
+                        bool istrue = true;
+                        Client? other = null;
+                        while(istrue) { 
+                            Console.Write("Please enter the pin code : ");
+                            string pincode = Console.ReadLine();
+                            Client[] clients = bank.clients;
+                            foreach (Client client in clients) {
+                                if (client.BankAccount.Pin == pincode) {
+                                    istrue = false;
+                                    other = client;
+                                    break;
+                                }else istrue = true;
+                            }
+                            if (istrue) {
+                                Console.WriteLine("Please enter valid pin code !");
+                                Console.Write("Please enter any key to continue ...");
+                                dynamic a = Console.ReadKey();
+                            }
+                        }
+                        Console.Write("Please enter the money amount : ");
+                        int amount = Convert.ToInt32(Console.ReadLine());
+                        Bank.models.Bank.currentClient.BankAccount.Balans -= amount;
+                        other!.BankAccount.Balans -= amount;
+                        Bank.models.Bank.currentClient.BankAccount.operations[Bank.models.Bank.currentClient.BankAccount.index++] = $"{amount}$ had sent from {Bank.models.Bank.currentClient.BankAccount.FullName} to {other.BankAccount.FullName}.";
                     }
                 }
             }
